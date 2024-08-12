@@ -5,19 +5,25 @@ import PackageDescription
 
 let package = Package(
     name: "IndiePitcherSwift",
+    platforms: [.macOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "IndiePitcherSwift",
-            targets: ["IndiePitcherSwift"]),
+            targets: ["IndiePitcherSwift"]
+        ),
     ],
+    dependencies: [.package(url: "https://github.com/vapor/vapor.git", from: "4.83.0")],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "IndiePitcherSwift"),
+            name: "IndiePitcherSwift",
+            dependencies: [.product(name: "Vapor", package: "vapor")]
+        ),
         .testTarget(
             name: "IndiePitcherSwiftTests",
-            dependencies: ["IndiePitcherSwift"]),
+            dependencies: ["IndiePitcherSwift"]
+        ),
     ]
 )
