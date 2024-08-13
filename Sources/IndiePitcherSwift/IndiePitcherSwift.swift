@@ -1,8 +1,12 @@
 import Foundation
 import Vapor
 
+
+/// The format of the email body
 public enum EmailBodyFormat: String, Content {
+    /// The body format is a markdown text
     case markdown
+    /// The body format is html text
     case html
 }
 
@@ -63,8 +67,9 @@ public enum CustomContactPropertyValue: Codable, Equatable {
     }
 }
 
+/// A contact in the contact list
 public struct Contact: Content {
-    public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, hardBouncedAt: Date? = nil, subscribedToLists: [String], customProperties: [String : CustomContactPropertyValue]) {
+    public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, hardBouncedAt: Date? = nil, subscribedToLists: [String], customProperties: [String : CustomContactPropertyValue], languageCode: String? = nil) {
         self.email = email
         self.userId = userId
         self.avatarUrl = avatarUrl
@@ -72,17 +77,28 @@ public struct Contact: Content {
         self.hardBouncedAt = hardBouncedAt
         self.subscribedToLists = subscribedToLists
         self.customProperties = customProperties
+        self.languageCode = languageCode
     }
     
+    /// The email of the contact
     public var email: String
+    /// The user id of the contact
     public var userId: String?
+    /// The avatar url of the contact
     public var avatarUrl: String?
+    /// The full name of the contact
     public var name: String?
+    /// The date when an attempt to send an email to the contact failed with a hard bounce, meaning the email address is invalid and no further emails will be send to this contact. You can reset this in the dashboard to re-enable sending emails to this contact.
     public var hardBouncedAt: Date?
+    /// The list of mailing lists the contact is subscribed to.
     public var subscribedToLists: [String]
+    /// The custom properties set fort his contact.
     public var customProperties: [String: CustomContactPropertyValue]
+    /// The language code of the contact.
+    public var languageCode: String?
 }
 
+/// The payload to create a new contact
 public struct CreateContact: Content {
     public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, languageCode: String? = nil, updateIfExists: Bool? = nil, subscribedToLists: Set<String>? = nil, customProperties: [String : CustomContactPropertyValue]? = nil) {
         self.email = email
@@ -95,24 +111,36 @@ public struct CreateContact: Content {
         self.customProperties = customProperties
     }
     
+    /// The email of the contact
     public var email: String
+    /// The user id of the contact
     public var userId: String?
+    /// The avatar url of the contact
     public var avatarUrl: String?
+    /// The full name of the contact
     public var name: String?
+    /// The language code of the contact.
     public var languageCode: String?
+    /// If a contact with the provided email already exists, update the contact with the new data
     public var updateIfExists: Bool?
+    /// The list of mailing lists the contact should be subscribed to. Use the `name` field of the lists.
     public var subscribedToLists: Set<String>?
+    /// The custom properties of the contact. Custom properties must be first defined in the IndiePitcher dashboard.
     public var customProperties: [String: CustomContactPropertyValue]?
 }
 
+/// The payload to create multiple contacts using a single API call
 public struct CreateMultipleContacts: Content {
     public init(contacts: [CreateContact]) {
         self.contacts = contacts
     }
     
+    /// The list of contacts to create
     public var contacts: [CreateContact]
 }
 
+/// The payload to update a contact in the contact list. 
+/// The email is required to identify the contact.
 public struct UpdateContact: Content {
     public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, languageCode: String? = nil, addedListSubscripitons: Set<String>? = nil, removedListSubscripitons: Set<String>? = nil, customProperties: [String : CustomContactPropertyValue?]? = nil) {
         self.email = email
@@ -125,13 +153,21 @@ public struct UpdateContact: Content {
         self.customProperties = customProperties
     }
     
+    /// The email of the contact
     public var email: String
+    /// The user id of the contact
     public var userId: String?
+    /// The avatar url of the contact
     public var avatarUrl: String?
+    /// The full name of the contact
     public var name: String?
+    /// The language code of the contact.
     public var languageCode: String?
+    /// The list of mailing lists to subscribe the contact to. Use the `name` field of the lists.
     public var addedListSubscripitons: Set<String>?
+    /// The list of mailing lists unsubscribe the contact from. Use the `name` field of the lists.
     public var removedListSubscripitons: Set<String>?
+    /// The custom properties of the contact. Custom properties must be first defined in the IndiePitcher dashboard. Pass 'nil' to remove a custom property.
     public var customProperties: [String: CustomContactPropertyValue?]?
 }
 
@@ -189,32 +225,56 @@ public struct SendEmailToContactList: Content {
     public var delayUntilDate: Date?
 }
 
+
+/// Represents a response returning data.
 public struct DataResposne<T: Content>: Content {
-    public var success: Bool = true
+    /// Always true
+    public var success: Bool
     public var data: T
 }
 
+
+/// Represents a response returning no useful data.
 public struct EmptyResposne: Content {
-    public var success: Bool = true
+    /// Always true
+    public var success: Bool
 }
 
+
+/// Represents a response returning paginated data.
 public struct PagedDataResponse<T: Content>: Content {
     
+    /// Paging metadata
     public struct PageMetadata: Content {
+        /// Page index, indexed from 1.
         public let page: Int
+        /// Number of results per page
         public let per: Int
+        /// Total number of results.
         public let total: Int
     }
     
-    public var success: Bool = true
+    /// Always true
+    public var success: Bool
+    
+    /// Returned results
     public var data: T
+    
+    /// Paging metadata
     public var metadata: PageMetadata
 }
 
+
+/// IndiePitcher SDK.
+/// This SDK is only intended for server-side Swift use. Do not embed the secret API key in client-side code for security reasons.
 public struct IndiePitcher {
     private let client: Client
     private let apiKey: String
     
+    /// Creates a new instance of IndiePitcher SDK
+    /// - Parameters:
+    ///   - client: Vapor's client instance to use to perform network requests.
+    ///   - apiKey: Your project's secret key.
     public init(client: Client, apiKey: String) {
         self.client = client
         self.apiKey = apiKey
@@ -233,6 +293,10 @@ public struct IndiePitcher {
         URI(stringLiteral: "https://api.indiepitcher.com/v2" + path)
     }
     
+    @discardableResult
+    /// Add a new contact to the contact list, or update an existing one if `updateIfExists` is set to `true`.
+    /// - Parameter contact: Contact properties.
+    /// - Returns: Created contact.
     public func addContact(contact: CreateContact) async throws -> DataResposne<Contact> {
         let response = try await client.post(buildUri(path: "/contacts/create"),
                                              headers: commonHeaders,
@@ -241,6 +305,9 @@ public struct IndiePitcher {
     }
     
     @discardableResult
+    /// Add miultiple contacts (up to 100) using a single API call to avoid being rate limited. Payloads with `updateIfExists` is set to `true` will be updated if a contact with given email already exists.
+    /// - Parameter contacts: Contact properties
+    /// - Returns: A generic empty response.
     public func addContacts(contacts: [CreateContact]) async throws -> EmptyResposne {
         let response = try await client.post(buildUri(path: "/contacts/create_many"),
                                              headers: commonHeaders,
@@ -248,6 +315,10 @@ public struct IndiePitcher {
         return try response.content.decode(EmptyResposne.self)
     }
     
+    @discardableResult
+    /// Updates a contact with given email address. This call will fail if a contact with provided email does not exist, use `addContact` instead in such case.
+    /// - Parameter contact: Contact properties to update
+    /// - Returns: Updated contact.
     public func updateContact(contact: UpdateContact) async throws -> DataResposne<Contact> {
         let response = try await client.post(buildUri(path: "/contacts/update"),
                                              headers: commonHeaders,
@@ -256,6 +327,9 @@ public struct IndiePitcher {
     }
     
     @discardableResult
+    /// Deletes a contact with provided email from the contact list
+    /// - Parameter email: The email address of the contact you wish to remove from the contact list
+    /// - Returns: A generic empty response.
     public func deleteContact(email: String) async throws -> EmptyResposne {
         
         struct Payload: Content {
@@ -269,6 +343,11 @@ public struct IndiePitcher {
         return try response.content.decode(EmptyResposne.self)
     }
     
+    /// Returns a paginated list of stored contacts in the contact list.
+    /// - Parameters:
+    ///   - page: Page to fetch, the first page has index 1.
+    ///   - perPage: How many contacts to return per page.
+    /// - Returns: A generic empty response.
     public func listContacts(page: Int = 1, perPage: Int = 10) async throws -> PagedDataResponse<Contact> {
         
         struct Payload: Content {
