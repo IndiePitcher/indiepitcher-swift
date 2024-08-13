@@ -214,7 +214,6 @@ public struct PagedDataResponse<T: Content>: Content {
 public struct IndiePitcher {
     private let client: Client
     private let apiKey: String
-    private let baseURL: URL = URL(string: "https://api.indiepitcher.com/v2")!
     
     public init(client: Client, apiKey: String) {
         self.client = client
@@ -231,7 +230,7 @@ public struct IndiePitcher {
     }
     
     private func buildUri(path: String) -> URI {
-        URI(stringLiteral: baseURL.appending(path: path).absoluteString)
+        URI(stringLiteral: "https://api.indiepitcher.com/v2" + path)
     }
     
     public func addContact(contact: CreateContact) async throws -> DataResposne<Contact> {
