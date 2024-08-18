@@ -34,7 +34,7 @@ public struct EmptyResposne: Content {
 
 /// Represents a response returning paginated data.
 public struct PagedDataResponse<T: Content>: Content {
-    public init(data: T, metadata: PagedDataResponse<T>.PageMetadata) {
+    public init(data: [T], metadata: PagedDataResponse<T>.PageMetadata) {
         self.success = true
         self.data = data
         self.metadata = metadata
@@ -42,6 +42,12 @@ public struct PagedDataResponse<T: Content>: Content {
     
     /// Paging metadata
     public struct PageMetadata: Content {
+        public init(page: Int, per: Int, total: Int) {
+            self.page = page
+            self.per = per
+            self.total = total
+        }
+        
         /// Page index, indexed from 1.
         public let page: Int
         /// Number of results per page
@@ -54,7 +60,7 @@ public struct PagedDataResponse<T: Content>: Content {
     public var success: Bool
     
     /// Returned results
-    public var data: T
+    public var data: [T]
     
     /// Paging metadata
     public var metadata: PageMetadata
