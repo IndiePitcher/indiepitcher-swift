@@ -1,5 +1,5 @@
 {
-  "originHash" : "0ea096f1242d4e1a91363ef699b93db8aa9bf360f3585d4a455b1a1b6af1a904",
+  "originHash" : "2109b08edf66ad60ae60f1a54839930fa4b3527b706ce874c951dad8d169ec20",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -29,12 +29,39 @@
       }
     },
     {
+      "identity" : "cwlcatchexception",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mattgallagher/CwlCatchException.git",
+      "state" : {
+        "revision" : "3ef6999c73b6938cc0da422f2c912d0158abb0a0",
+        "version" : "2.2.0"
+      }
+    },
+    {
+      "identity" : "cwlpreconditiontesting",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mattgallagher/CwlPreconditionTesting.git",
+      "state" : {
+        "revision" : "2ef56b2caf25f55fa7eef8784c30d5a767550f54",
+        "version" : "2.2.1"
+      }
+    },
+    {
       "identity" : "multipart-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/multipart-kit.git",
       "state" : {
         "revision" : "a31236f24bfd2ea2f520a74575881f6731d7ae68",
         "version" : "4.7.0"
+      }
+    },
+    {
+      "identity" : "nimble",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Quick/Nimble.git",
+      "state" : {
+        "revision" : "edaedc1ec86f14ac6e2ca495b94f0ff7150d98d0",
+        "version" : "12.3.0"
       }
     },
     {

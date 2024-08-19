@@ -13,7 +13,10 @@ let package = Package(
             targets: ["IndiePitcherSwift"]
         ),
     ],
-    dependencies: [.package(url: "https://github.com/vapor/vapor.git", from: "4.83.0")],
+    dependencies: [
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.83.0"),
+        .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
@@ -23,7 +26,7 @@ let package = Package(
         ),
         .testTarget(
             name: "IndiePitcherSwiftTests",
-            dependencies: ["IndiePitcherSwift"]
+            dependencies: ["IndiePitcherSwift", "Nimble"]
         ),
     ]
 )

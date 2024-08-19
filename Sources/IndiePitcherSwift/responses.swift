@@ -18,6 +18,8 @@ public struct DataResponse<T: Content>: Content {
     
     /// Always true
     public var success: Bool
+    
+    /// Returned data
     public var data: T
 }
 
