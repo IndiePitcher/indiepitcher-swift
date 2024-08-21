@@ -53,7 +53,7 @@ public struct IndiePitcher {
     /// - Parameter contact: Contact properties to update
     /// - Returns: Updated contact.
     @discardableResult public func updateContact(contact: UpdateContact) async throws -> DataResponse<Contact> {
-        let response = try await client.post(buildUri(path: "/contacts/update"),
+        let response = try await client.patch(buildUri(path: "/contacts/update"),
                                              headers: commonHeaders,
                                              content: contact)
         return try response.content.decode(DataResponse<Contact>.self)

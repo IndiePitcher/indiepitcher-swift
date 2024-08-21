@@ -101,11 +101,11 @@ public struct Contact: Content {
     public var name: String?
     /// The date when an attempt to send an email to the contact failed with a hard bounce, meaning the email address is invalid and no further emails will be send to this contact. You can reset this in the dashboard to re-enable sending emails to this contact.
     public var hardBouncedAt: Date?
-    /// The list of mailing lists the contact is subscribed to.
+    /// The array of mailing lists the contact is subscribed to.
     public var subscribedToLists: [String]
     /// The custom properties set fort his contact.
     public var customProperties: [String: CustomContactPropertyValue]
-    /// The language code of the contact.
+    /// The primary language language of this contact, represented by a language code. Example: en-US
     public var languageCode: String?
 }
 
@@ -164,8 +164,7 @@ public struct CreateMultipleContacts: Content {
     public var contacts: [CreateContact]
 }
 
-/// The payload to update a contact in the contact list.
-/// The email is required to identify the contact.
+/// The payload to update a contact in the contact list. The email is required to identify the contact.
 public struct UpdateContact: Content {
     
     /// Initializer
@@ -207,7 +206,6 @@ public struct UpdateContact: Content {
     public var customProperties: [String: CustomContactPropertyValue?]?
 }
 
-
 /// Payload of send transactional email request.
 public struct SendEmail: Content {
     
@@ -237,6 +235,7 @@ public struct SendEmail: Content {
     public var bodyFormat: EmailBodyFormat
 }
 
+/// Send an email to one of more registered contacts.
 public struct SendEmailToContact: Content {
     
     /// Initializer
@@ -342,16 +341,21 @@ public struct ContactList: Content {
     public var numSubscribers: Int
 }
 
+
+/// A portal session that allows a contact to manage their email list subscriptions when redirected to returned `url`. A session is valid for 30 minutes.
 public struct ContactListPortalSession: Content {
-    public init(id: UUID, url: URL, expiresAt: Date, returnURL: URL) {
-        self.id = id
+    public init(url: URL, expiresAt: Date, returnURL: URL) {
         self.url = url
         self.expiresAt = expiresAt
         self.returnURL = returnURL
     }
     
-    public var id: UUID
+    /// The URL under which the user can manage their list subscriptions.
     public var url: URL
+    
+    /// Specified until when will the URL be valid
     public var expiresAt: Date
+    
+    /// URL to redirect the user to when they tap on that they're cone editing their lists, or when the session is expired.
     public var returnURL: URL
 }
