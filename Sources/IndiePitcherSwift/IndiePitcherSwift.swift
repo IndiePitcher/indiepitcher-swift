@@ -26,10 +26,10 @@ public struct IndiePitcher {
     }
     
     private func buildUri(path: String) -> URI {
-        URI(stringLiteral: "https://api.indiepitcher.com/v2" + path)
+        URI(stringLiteral: "https://api.indiepitcher.com/v1" + path)
     }
     
-    /// Add a new contact to the contact list, or update an existing one if `updateIfExists` is set to `true`.
+    /// Add a new contact to the mailing list, or update an existing one if `updateIfExists` is set to `true`.
     /// - Parameter contact: Contact properties.
     /// - Returns: Created contact.
     @discardableResult public func addContact(contact: CreateContact) async throws -> DataResponse<Contact> {
@@ -59,8 +59,8 @@ public struct IndiePitcher {
         return try response.content.decode(DataResponse<Contact>.self)
     }
     
-    /// Deletes a contact with provided email from the contact list
-    /// - Parameter email: The email address of the contact you wish to remove from the contact list
+    /// Deletes a contact with provided email from the mailing list
+    /// - Parameter email: The email address of the contact you wish to remove from the mailing list
     /// - Returns: A generic empty response.
     @discardableResult public func deleteContact(email: String) async throws -> EmptyResposne {
         
@@ -75,7 +75,7 @@ public struct IndiePitcher {
         return try response.content.decode(EmptyResposne.self)
     }
     
-    /// Returns a paginated list of stored contacts in the contact list.
+    /// Returns a paginated list of stored contacts in the mailing list.
     /// - Parameters:
     ///   - page: Page to fetch, the first page has index 1.
     ///   - perPage: How many contacts to return per page.
@@ -100,8 +100,8 @@ public struct IndiePitcher {
         return try response.content.decode(EmptyResposne.self)
     }
     
-    /// Send a personalized email to one more (up to 100 using 1 API call) contacts subscribed to a proviced contact list. This is the recommended way to send an email to members of a team of your product.
-    /// All provided emails must belong to your contact list and must be members of provided contact list. All contacts are automatically subscribed to `important` default contact list. You can use peronalization tags such as `Hi {{firstName|default:"there"}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
+    /// Send a personalized email to one more (up to 100 using 1 API call) contacts subscribed to a proviced mailing list. This is the recommended way to send an email to members of a team of your product.
+    /// All provided emails must belong to your mailing list and must be members of provided mailing list. All contacts are automatically subscribed to `important` default mailing list. You can use peronalization tags such as `Hi {{firstName|default:"there"}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
     /// - Parameter data: Input params.
     /// - Returns: A genereic response with no return data.
     @discardableResult public func sendEmailToContact(data: SendEmailToContact) async throws -> EmptyResposne {
@@ -112,53 +112,53 @@ public struct IndiePitcher {
         return try response.content.decode(EmptyResposne.self)
     }
     
-    /// Send a personalized email to all contacts subscribed to a provided contact list. This is the recommendat way to send a newsletter, by creating a list called something like `Newsletter`.
-    /// All contacts are automatically subscribed to `important` default contact list. You can use peronalization tags such as `Hi {{firstName|default:"there"}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
+    /// Send a personalized email to all contacts subscribed to a provided mailing list. This is the recommendat way to send a newsletter, by creating a list called something like `Newsletter`.
+    /// All contacts are automatically subscribed to `important` default mailing list. You can use peronalization tags such as `Hi {{firstName|default:"there"}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
     /// - Parameter data: Input params.
     /// - Returns: A genereic response with no return data.
-    @discardableResult public func sendEmailToContactList(data: SendEmailToContactList) async throws -> EmptyResposne {
-        let response = try await client.post(buildUri(path: "/email/contact_list"),
+    @discardableResult public func sendEmailToMailingList(data: SendEmailToMailingList) async throws -> EmptyResposne {
+        let response = try await client.post(buildUri(path: "/email/list"),
                                              headers: commonHeaders,
                                              content: data)
         
         return try response.content.decode(EmptyResposne.self)
     }
     
-    /// Returns contact lists contacts can subscribe to.
+    /// Returns mailing lists contacts can subscribe to.
     /// - Parameters:
     ///   - page: Page to fetch, the first page has index 1.
     ///   - perPage: How many contacts to return per page.
-    /// - Returns: A paginated array of contact lists
-    public func listContactLists(page: Int = 1, perPage: Int = 10) async throws -> PagedDataResponse<ContactList> {
+    /// - Returns: A paginated array of mailing lists
+    public func listMailingLists(page: Int = 1, perPage: Int = 10) async throws -> PagedDataResponse<MailingList> {
         
         struct Payload: Content {
             let page: Int
             let per: Int
         }
         
-        let response = try await client.get(buildUri(path: "/contact_lists?page=\(page)&per=\(perPage)"),
+        let response = try await client.get(buildUri(path: "/lists?page=\(page)&per=\(perPage)"),
                                             headers: commonHeaders)
         
-        return try response.content.decode(PagedDataResponse<ContactList>.self)
+        return try response.content.decode(PagedDataResponse<MailingList>.self)
     }
     
     
-    /// Generates a new public URL for a contact with provided email to manage their contact list subscriptions.
+    /// Generates a new public URL for a contact with provided email to manage their mailing list subscriptions.
     /// - Parameters:
     ///   - contactEmail: The email of a contact this session is for.
-    ///   - returnURL: The URL to redirect to when the user is done editing their contact list, or when the session has expired.
+    ///   - returnURL: The URL to redirect to when the user is done editing their mailing list, or when the session has expired.
     /// - Returns: Newly created URL session.
-    public func createContactListsPortalSession(contactEmail: String, returnURL: URL) async throws -> DataResponse<ContactListPortalSession> {
+    public func createMailingListsPortalSession(contactEmail: String, returnURL: URL) async throws -> DataResponse<MailingListPortalSession> {
         
         struct Payload: Content {
             let contactEmail: String
             let returnURL: URL
         }
         
-        let response = try await client.post(buildUri(path: "/contact_lists/portal_session"),
+        let response = try await client.post(buildUri(path: "/lists/portal_session"),
                                              headers: commonHeaders,
                                              content: Payload(contactEmail: contactEmail, returnURL: returnURL))
         
-        return try response.content.decode(DataResponse<ContactListPortalSession>.self)
+        return try response.content.decode(DataResponse<MailingListPortalSession>.self)
     }
 }

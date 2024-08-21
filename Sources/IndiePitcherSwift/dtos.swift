@@ -78,7 +78,7 @@ public enum CustomContactPropertyValue: Codable, Equatable {
     }
 }
 
-/// A contact in the contact list
+/// A contact in the mailing list
 public struct Contact: Content {
     public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, hardBouncedAt: Date? = nil, subscribedToLists: [String], customProperties: [String : CustomContactPropertyValue], languageCode: String? = nil) {
         self.email = email
@@ -164,7 +164,7 @@ public struct CreateMultipleContacts: Content {
     public var contacts: [CreateContact]
 }
 
-/// The payload to update a contact in the contact list. The email is required to identify the contact.
+/// The payload to update a contact in the mailing list. The email is required to identify the contact.
 public struct UpdateContact: Content {
     
     /// Initializer
@@ -284,7 +284,7 @@ public struct SendEmailToContact: Content {
     public var delayUntilDate: Date?
 }
 
-public struct SendEmailToContactList: Content {
+public struct SendEmailToMailingList: Content {
     
     /// Initializer
     /// - Parameters:
@@ -322,8 +322,8 @@ public struct SendEmailToContactList: Content {
     public var delayUntilDate: Date?
 }
 
-/// Represents a contact list contacts can subscribe to, such as `Monthly newsletter` or `Onboarding`.
-public struct ContactList: Content {
+/// Represents a mailing list contacts can subscribe to, such as `Monthly newsletter` or `Onboarding`.
+public struct MailingList: Content {
     
     public init(name: String, title: String, numSubscribers: Int) {
         self.name = name
@@ -331,10 +331,10 @@ public struct ContactList: Content {
         self.numSubscribers = numSubscribers
     }
     
-    /// The unique name of the contact list meant to be used by the public API. Not intended to be be shown to the end users, that's what `title` is for.
+    /// The unique name of the mailing list meant to be used by the public API. Not intended to be be shown to the end users, that's what `title` is for.
     public var name: String
     
-    /// A human readable name of the contact list.
+    /// A human readable name of the mailing list.
     public var title: String
     
     /// The  number of contacts subscribed to this list.
@@ -343,7 +343,7 @@ public struct ContactList: Content {
 
 
 /// A portal session that allows a contact to manage their email list subscriptions when redirected to returned `url`. A session is valid for 30 minutes.
-public struct ContactListPortalSession: Content {
+public struct MailingListPortalSession: Content {
     public init(url: URL, expiresAt: Date, returnURL: URL) {
         self.url = url
         self.expiresAt = expiresAt

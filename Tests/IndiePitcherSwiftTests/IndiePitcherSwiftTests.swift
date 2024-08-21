@@ -25,14 +25,14 @@ final class IndiePitcherSwiftTests: XCTestCase {
                                            bodyFormat: .markdown))
     }
     
-    func testGetContactLists() async throws {
-        let listsResponse = try await indiePitcher.listContactLists()
+    func testGetMailingLists() async throws {
+        let listsResponse = try await indiePitcher.listMailingLists()
         expect(listsResponse.metadata.total) == 2
         expect(listsResponse.data.count) == 2
     }
     
     func testSendMarketingEmailToList() async throws {
-        try await indiePitcher.sendEmailToContactList(data: .init(subject: "Test marketing email from IP Swift SDK unit tests",
+        try await indiePitcher.sendEmailToMailingList(data: .init(subject: "Test marketing email from IP Swift SDK unit tests",
                                                         body: "This is a test body of a marketing email that supports **markdown**.",
                                                         bodyFormat: .markdown,
                                                         list: "test_list_1"))
