@@ -101,7 +101,7 @@ public struct IndiePitcher {
     }
     
     /// Send a personalized email to one more (up to 100 using 1 API call) contacts subscribed to a proviced mailing list. This is the recommended way to send an email to members of a team of your product.
-    /// All provided emails must belong to your mailing list and must be members of provided mailing list. All contacts are automatically subscribed to `important` default mailing list. You can use peronalization tags such as `Hi {{firstName|default:"there"}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
+    /// All provided emails must belong to your mailing list and must be members of provided mailing list. All contacts are automatically subscribed to `important` default mailing list. You can use peronalization tags such as `Hi {{firstName}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
     /// - Parameter data: Input params.
     /// - Returns: A genereic response with no return data.
     @discardableResult public func sendEmailToContact(data: SendEmailToContact) async throws -> EmptyResposne {
@@ -113,7 +113,7 @@ public struct IndiePitcher {
     }
     
     /// Send a personalized email to all contacts subscribed to a provided mailing list. This is the recommendat way to send a newsletter, by creating a list called something like `Newsletter`.
-    /// All contacts are automatically subscribed to `important` default mailing list. You can use peronalization tags such as `Hi {{firstName|default:"there"}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
+    /// All contacts are automatically subscribed to `important` default mailing list. You can use peronalization tags such as `Hi {{firstName}}` to peronalize individual sent emails, and scheduled it to be sent with a delay.
     /// - Parameter data: Input params.
     /// - Returns: A genereic response with no return data.
     @discardableResult public func sendEmailToMailingList(data: SendEmailToMailingList) async throws -> EmptyResposne {
