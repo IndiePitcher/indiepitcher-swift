@@ -12,7 +12,7 @@ The SDK is designed to work with any framework built on top of Swift Nio - Vapor
 - First, you need to get an API key. Go to the IndiePitcher dashboard, create a project, and generate a public API key.
 - Add the key to your `.env` file. Following examples will assume that you've added the key under `IP_SECRET_API_KEY` key.
 
-### Vapor
+### Vapor 4
 Create a new file, something like `Application+IndiePitcher.swift` and paste in following code
 ```swift
 import Vapor
@@ -47,7 +47,7 @@ app.get { req async in
 ```
 
 
-### Hummingbird
+### Hummingbird 2
 TODO
 
 
