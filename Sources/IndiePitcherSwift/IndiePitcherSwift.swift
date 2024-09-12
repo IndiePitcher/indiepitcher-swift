@@ -47,7 +47,7 @@ public struct IndiePitcher {
         "https://api.indiepitcher.com/v1" + path
     }
     
-    private func post<T: Decodable>(path: String, body: Encodable) async throws -> T {
+    private func post<T: Codable>(path: String, body: Codable) async throws -> T {
         
         var headers = commonHeaders
         headers.add(name: "Content-Type", value: "application/json")
@@ -62,7 +62,7 @@ public struct IndiePitcher {
         return try self.jsonDecoder.decode(T.self, from: responseData)
     }
     
-    private func patch<T: Decodable>(path: String, body: Encodable) async throws -> T {
+    private func patch<T: Codable>(path: String, body: Codable) async throws -> T {
         
         var headers = commonHeaders
         headers.add(name: "Content-Type", value: "application/json")
@@ -77,7 +77,7 @@ public struct IndiePitcher {
         return try self.jsonDecoder.decode(T.self, from: responseData)
     }
     
-    private func get<T: Decodable>(path: String) async throws -> T {
+    private func get<T: Codable>(path: String) async throws -> T {
         
         let headers = commonHeaders
         
@@ -118,7 +118,7 @@ public struct IndiePitcher {
     /// - Returns: A generic empty response.
     @discardableResult public func deleteContact(email: String) async throws -> EmptyResposne {
         
-        struct Payload: Encodable {
+        struct Payload: Codable {
             var email: String
         }
         
@@ -165,7 +165,7 @@ public struct IndiePitcher {
     /// - Returns: A paginated array of mailing lists
     public func listMailingLists(page: Int = 1, perPage: Int = 10) async throws -> PagedDataResponse<MailingList> {
         
-        struct Payload: Encodable {
+        struct Payload: Codable {
             let page: Int
             let per: Int
         }
@@ -181,7 +181,7 @@ public struct IndiePitcher {
     /// - Returns: Newly created URL session.
     public func createMailingListsPortalSession(contactEmail: String, returnURL: URL) async throws -> DataResponse<MailingListPortalSession> {
         
-        struct Payload: Encodable {
+        struct Payload: Codable {
             let contactEmail: String
             let returnURL: URL
         }
