@@ -1,20 +1,18 @@
 import XCTest
 @testable import IndiePitcherSwift
-import Vapor
+import AsyncHTTPClient
 import Nimble
 
 final class IndiePitcherSwiftTests: XCTestCase {
     
-    var app: Application!
     var indiePitcher: IndiePitcher!
     
     override func setUp() async throws {
-        app = try await Application.make(.testing)
-        indiePitcher = IndiePitcher(client: app.client, apiKey: Environment.get("IP_SECRET_API_KEY")!)
+        indiePitcher = IndiePitcher(client: .shared, apiKey: IP_SECRET_API_KEY)
     }
     
     override func tearDown() async throws {
-        try await app.asyncShutdown()
+        // no need to shut down shared client
     }
     
     func testSendTransactionalEmailMarkdown() async throws {
@@ -53,5 +51,9 @@ final class IndiePitcherSwiftTests: XCTestCase {
                                                          subscribedToLists: ["test_list_1", "test_list_2"]))
 
         try await indiePitcher.deleteContact(email: email)
+    }
+    
+    func testCreatePortalSession() async throws {
+        _ = try await indiePitcher.createMailingListsPortalSession(contactEmail: "petr@indiepitcher.com", returnURL: .init(string: "https://indiepitcher.com")!)
     }
 }

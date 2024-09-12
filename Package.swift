@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.83.0"),
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.20.0"),
         .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0"),
     ],
     targets: [
@@ -22,7 +22,7 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "IndiePitcherSwift",
-            dependencies: [.product(name: "Vapor", package: "vapor")]
+            dependencies: [.product(name: "AsyncHTTPClient", package: "async-http-client"),]
         ),
         .testTarget(
             name: "IndiePitcherSwiftTests",

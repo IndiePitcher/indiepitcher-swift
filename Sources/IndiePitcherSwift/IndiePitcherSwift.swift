@@ -1,62 +1,116 @@
 import Foundation
-import Vapor
+import AsyncHTTPClient
+import NIOHTTP1
+import NIOCore
 
 /// IndiePitcher SDK.
 /// This SDK is only intended for server-side Swift use. Do not embed the secret API key in client-side code for security reasons.
 public struct IndiePitcher {
-    private let client: Client
+    private let client: HTTPClient
     private let apiKey: String
+    private let requestTimeout: TimeAmount = .seconds(30)
+    private let maxResponseSize = 1024 * 1024 * 100
     
     /// Creates a new instance of IndiePitcher SDK
     /// - Parameters:
     ///   - client: Vapor's client instance to use to perform network requests.
     ///   - apiKey: Your project's secret key.
-    public init(client: Client, apiKey: String) {
+    public init(client: HTTPClient, apiKey: String) {
         self.client = client
         self.apiKey = apiKey
     }
     
+    // MARK: networking
+    
     private var commonHeaders: HTTPHeaders {
-        get throws {
+        get {
             var headers = HTTPHeaders()
-            headers.bearerAuthorization = .init(token: apiKey)
-            headers.contentType = .json
+            headers.add(name: "Authorization", value: "Bearer \(apiKey)")
+            headers.add(name: "User-Agent", value: "IndiePitcherSwift")
             return headers
         }
     }
     
-    private func buildUri(path: String) -> URI {
-        URI(stringLiteral: "https://api.indiepitcher.com/v1" + path)
+    private var jsonEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
     }
+    
+    private var jsonDecoder: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }
+    
+    private func buildUri(path: String) -> String {
+        "https://api.indiepitcher.com/v1" + path
+    }
+    
+    private func post<T: Decodable>(path: String, body: Encodable) async throws -> T {
+        
+        var headers = commonHeaders
+        headers.add(name: "Content-Type", value: "application/json")
+        
+        var request = HTTPClientRequest(url: buildUri(path: path))
+        request.method = .POST
+        request.headers = headers
+        request.body = .bytes(.init(data: try jsonEncoder.encode(body)))
+        
+        let response = try await client.execute(request, timeout: requestTimeout)
+        let responseData = try await response.body.collect(upTo: maxResponseSize)
+        return try self.jsonDecoder.decode(T.self, from: responseData)
+    }
+    
+    private func patch<T: Decodable>(path: String, body: Encodable) async throws -> T {
+        
+        var headers = commonHeaders
+        headers.add(name: "Content-Type", value: "application/json")
+        
+        var request = HTTPClientRequest(url: buildUri(path: path))
+        request.method = .PATCH
+        request.headers = headers
+        request.body = .bytes(.init(data: try jsonEncoder.encode(body)))
+        
+        let response = try await client.execute(request, timeout: requestTimeout)
+        let responseData = try await response.body.collect(upTo: maxResponseSize)
+        return try self.jsonDecoder.decode(T.self, from: responseData)
+    }
+    
+    private func get<T: Decodable>(path: String) async throws -> T {
+        
+        let headers = commonHeaders
+        
+        var request = HTTPClientRequest(url: buildUri(path: path))
+        request.method = .GET
+        request.headers = headers
+        
+        let response = try await client.execute(request, timeout: requestTimeout)
+        let responseData = try await response.body.collect(upTo: maxResponseSize)
+        return try self.jsonDecoder.decode(T.self, from: responseData)
+    }
+    
+    // MARK: API calls
     
     /// Add a new contact to the mailing list, or update an existing one if `updateIfExists` is set to `true`.
     /// - Parameter contact: Contact properties.
     /// - Returns: Created contact.
     @discardableResult public func addContact(contact: CreateContact) async throws -> DataResponse<Contact> {
-        let response = try await client.post(buildUri(path: "/contacts/create"),
-                                             headers: commonHeaders,
-                                             content: contact)
-        return try response.content.decode(DataResponse<Contact>.self)
+        try await post(path: "/contacts/create", body: contact)
     }
     
     /// Add miultiple contacts (up to 100) using a single API call to avoid being rate limited. Payloads with `updateIfExists` is set to `true` will be updated if a contact with given email already exists.
     /// - Parameter contacts: Contact properties
     /// - Returns: A generic empty response.
     @discardableResult public func addContacts(contacts: [CreateContact]) async throws -> EmptyResposne {
-        let response = try await client.post(buildUri(path: "/contacts/create_many"),
-                                             headers: commonHeaders,
-                                             content: contacts)
-        return try response.content.decode(EmptyResposne.self)
+        try await post(path: "/contacts/create_many", body: contacts)
     }
     
     /// Updates a contact with given email address. This call will fail if a contact with provided email does not exist, use `addContact` instead in such case.
     /// - Parameter contact: Contact properties to update
     /// - Returns: Updated contact.
     @discardableResult public func updateContact(contact: UpdateContact) async throws -> DataResponse<Contact> {
-        let response = try await client.patch(buildUri(path: "/contacts/update"),
-                                             headers: commonHeaders,
-                                             content: contact)
-        return try response.content.decode(DataResponse<Contact>.self)
+        try await patch(path: "/contacts/update", body: contact)
     }
     
     /// Deletes a contact with provided email from the mailing list
@@ -64,15 +118,11 @@ public struct IndiePitcher {
     /// - Returns: A generic empty response.
     @discardableResult public func deleteContact(email: String) async throws -> EmptyResposne {
         
-        struct Payload: Content {
+        struct Payload: Encodable {
             var email: String
         }
         
-        let response = try await client.post(buildUri(path: "/contacts/delete"),
-                                             headers: commonHeaders,
-                                             content: Payload(email: email))
-        
-        return try response.content.decode(EmptyResposne.self)
+        return try await post(path: "/contacts/delete", body: Payload(email: email))
     }
     
     /// Returns a paginated list of stored contacts in the mailing list.
@@ -81,11 +131,7 @@ public struct IndiePitcher {
     ///   - perPage: How many contacts to return per page.
     /// - Returns: A paginated array of contacts
     public func listContacts(page: Int = 1, perPage: Int = 10) async throws -> PagedDataResponse<Contact> {
-        
-        let response = try await client.get(buildUri(path: "/contacts?page=\(page)&per=\(perPage)"),
-                                             headers: commonHeaders)
-        
-        return try response.content.decode(PagedDataResponse<Contact>.self)
+        try await get(path: "/contacts?page=\(page)&per=\(perPage)")
     }
     
     /// Sends an email to specified email address.
@@ -93,11 +139,7 @@ public struct IndiePitcher {
     /// - Parameter data: Input params.
     /// - Returns: A genereic response with no return data.
     @discardableResult public func sendEmail(data: SendEmail) async throws -> EmptyResposne {
-        let response = try await client.post(buildUri(path: "/email/transactional"),
-                                             headers: commonHeaders,
-                                             content: data)
-        
-        return try response.content.decode(EmptyResposne.self)
+        try await post(path: "/email/transactional", body: data)
     }
     
     /// Send a personalized email to one more (up to 100 using 1 API call) contacts subscribed to a proviced mailing list. This is the recommended way to send an email to members of a team of your product.
@@ -105,11 +147,7 @@ public struct IndiePitcher {
     /// - Parameter data: Input params.
     /// - Returns: A genereic response with no return data.
     @discardableResult public func sendEmailToContact(data: SendEmailToContact) async throws -> EmptyResposne {
-        let response = try await client.post(buildUri(path: "/email/contact"),
-                                             headers: commonHeaders,
-                                             content: data)
-        
-        return try response.content.decode(EmptyResposne.self)
+        try await post(path: "/email/contact", body: data)
     }
     
     /// Send a personalized email to all contacts subscribed to a provided mailing list. This is the recommendat way to send a newsletter, by creating a list called something like `Newsletter`.
@@ -117,11 +155,7 @@ public struct IndiePitcher {
     /// - Parameter data: Input params.
     /// - Returns: A genereic response with no return data.
     @discardableResult public func sendEmailToMailingList(data: SendEmailToMailingList) async throws -> EmptyResposne {
-        let response = try await client.post(buildUri(path: "/email/list"),
-                                             headers: commonHeaders,
-                                             content: data)
-        
-        return try response.content.decode(EmptyResposne.self)
+        try await post(path: "/email/list", body: data)
     }
     
     /// Returns mailing lists contacts can subscribe to.
@@ -131,15 +165,12 @@ public struct IndiePitcher {
     /// - Returns: A paginated array of mailing lists
     public func listMailingLists(page: Int = 1, perPage: Int = 10) async throws -> PagedDataResponse<MailingList> {
         
-        struct Payload: Content {
+        struct Payload: Encodable {
             let page: Int
             let per: Int
         }
         
-        let response = try await client.get(buildUri(path: "/lists?page=\(page)&per=\(perPage)"),
-                                            headers: commonHeaders)
-        
-        return try response.content.decode(PagedDataResponse<MailingList>.self)
+        return try await get(path: "/lists?page=\(page)&per=\(perPage)")
     }
     
     
@@ -150,15 +181,11 @@ public struct IndiePitcher {
     /// - Returns: Newly created URL session.
     public func createMailingListsPortalSession(contactEmail: String, returnURL: URL) async throws -> DataResponse<MailingListPortalSession> {
         
-        struct Payload: Content {
+        struct Payload: Encodable {
             let contactEmail: String
             let returnURL: URL
         }
         
-        let response = try await client.post(buildUri(path: "/lists/portal_session"),
-                                             headers: commonHeaders,
-                                             content: Payload(contactEmail: contactEmail, returnURL: returnURL))
-        
-        return try response.content.decode(DataResponse<MailingListPortalSession>.self)
+        return try await post(path: "/lists/portal_session", body: Payload(contactEmail: contactEmail, returnURL: returnURL))
     }
 }

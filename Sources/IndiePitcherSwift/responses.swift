@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import Vapor
 
 /// Represents a response returning data.
-public struct DataResponse<T: Content>: Content {
+public struct DataResponse<T: Decodable>: Decodable {
     
     public init(data: T) {
         self.success = true
@@ -24,7 +23,7 @@ public struct DataResponse<T: Content>: Content {
 }
 
 /// Represents a response returning no useful data.
-public struct EmptyResposne: Content {
+public struct EmptyResposne: Decodable {
     
     public init() {
         self.success = true
@@ -35,7 +34,7 @@ public struct EmptyResposne: Content {
 }
 
 /// Represents a response returning paginated data.
-public struct PagedDataResponse<T: Content>: Content {
+public struct PagedDataResponse<T: Decodable>: Decodable {
     public init(data: [T], metadata: PagedDataResponse<T>.PageMetadata) {
         self.success = true
         self.data = data
@@ -43,7 +42,7 @@ public struct PagedDataResponse<T: Content>: Content {
     }
     
     /// Paging metadata
-    public struct PageMetadata: Content {
+    public struct PageMetadata: Decodable {
         public init(page: Int, per: Int, total: Int) {
             self.page = page
             self.per = per

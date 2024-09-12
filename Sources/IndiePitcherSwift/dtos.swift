@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import Vapor
 
 /// The format of the email body
-public enum EmailBodyFormat: String, Content {
+public enum EmailBodyFormat: String, Codable {
     /// The body format is a markdown text
     case markdown
     /// The body format is html text
@@ -79,7 +78,7 @@ public enum CustomContactPropertyValue: Codable, Equatable {
 }
 
 /// A contact in the mailing list
-public struct Contact: Content {
+public struct Contact: Codable {
     public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, hardBouncedAt: Date? = nil, subscribedToLists: [String], customProperties: [String : CustomContactPropertyValue], languageCode: String? = nil) {
         self.email = email
         self.userId = userId
@@ -110,7 +109,7 @@ public struct Contact: Content {
 }
 
 /// The payload to create a new contact
-public struct CreateContact: Content {
+public struct CreateContact: Codable {
     
     /// Initializer
     /// - Parameters:
@@ -156,7 +155,7 @@ public struct CreateContact: Content {
 }
 
 /// The payload to create multiple contacts using a single API call
-public struct CreateMultipleContacts: Content {
+public struct CreateMultipleContacts: Codable {
     
     /// Initializer
     /// - Parameter contacts: The list of contacts to create
@@ -169,7 +168,7 @@ public struct CreateMultipleContacts: Content {
 }
 
 /// The payload to update a contact in the mailing list. The email is required to identify the contact.
-public struct UpdateContact: Content {
+public struct UpdateContact: Codable {
     
     /// Initializer
     /// - Parameters:
@@ -211,7 +210,7 @@ public struct UpdateContact: Content {
 }
 
 /// Payload of send transactional email request.
-public struct SendEmail: Content {
+public struct SendEmail: Codable {
     
     /// Initializer
     /// - Parameters:
@@ -240,7 +239,7 @@ public struct SendEmail: Content {
 }
 
 /// Send an email to one of more registered contacts.
-public struct SendEmailToContact: Content {
+public struct SendEmailToContact: Codable {
     
     /// Initializer
     /// - Parameters:
@@ -288,7 +287,7 @@ public struct SendEmailToContact: Content {
     public var delayUntilDate: Date?
 }
 
-public struct SendEmailToMailingList: Content {
+public struct SendEmailToMailingList: Codable {
     
     /// Initializer
     /// - Parameters:
@@ -327,7 +326,7 @@ public struct SendEmailToMailingList: Content {
 }
 
 /// Represents a mailing list contacts can subscribe to, such as `Monthly newsletter` or `Onboarding`.
-public struct MailingList: Content {
+public struct MailingList: Codable {
     
     public init(name: String, title: String, numSubscribers: Int) {
         self.name = name
@@ -347,7 +346,7 @@ public struct MailingList: Content {
 
 
 /// A portal session that allows a contact to manage their email list subscriptions when redirected to returned `url`. A session is valid for 30 minutes.
-public struct MailingListPortalSession: Content {
+public struct MailingListPortalSession: Codable {
     public init(url: URL, expiresAt: Date, returnURL: URL) {
         self.url = url
         self.expiresAt = expiresAt
