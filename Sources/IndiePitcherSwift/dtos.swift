@@ -122,7 +122,8 @@ public struct CreateContact: Content {
     ///   - updateIfExists: If a contact with the provided email already exists, update the contact with the new data.
     ///   - subscribedToLists: The list of mailing lists the contact should be subscribed to. Use the `name` field of the lists.
     ///   - customProperties: The custom properties of the contact. Custom properties must be first defined in the IndiePitcher dashboard.
-    public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, languageCode: String? = nil, updateIfExists: Bool? = nil, subscribedToLists: Set<String>? = nil, customProperties: [String : CustomContactPropertyValue]? = nil) {
+    ///   - ignoreListSubscriptionsWhenUpdating: Whether to ignore subscribedToLists field if the contact already exists and `updateIfExists` is set to `true`. Useful to avoid accidentally resubscribing a contact to lists they unsubscribed before. Default value is `true`.
+    public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, languageCode: String? = nil, updateIfExists: Bool? = nil, subscribedToLists: Set<String>? = nil, customProperties: [String : CustomContactPropertyValue]? = nil, ignoreListSubscriptionsWhenUpdating: Bool? = nil) {
         self.email = email
         self.userId = userId
         self.avatarUrl = avatarUrl
@@ -131,6 +132,7 @@ public struct CreateContact: Content {
         self.updateIfExists = updateIfExists
         self.subscribedToLists = subscribedToLists
         self.customProperties = customProperties
+        self.ignoreListSubscriptionsWhenUpdating = ignoreListSubscriptionsWhenUpdating
     }
     
     /// The email of the contact.
@@ -149,6 +151,8 @@ public struct CreateContact: Content {
     public var subscribedToLists: Set<String>?
     /// The custom properties of the contact. Custom properties must be first defined in the IndiePitcher dashboard.
     public var customProperties: [String: CustomContactPropertyValue]?
+    /// Whether to ignore subscribedToLists field if the contact already exists and `updateIfExists` is set to `true`. Useful to avoid accidentally resubscribing a contact to lists they unsubscribed before. Default value is `true`.
+    public var ignoreListSubscriptionsWhenUpdating: Bool?
 }
 
 /// The payload to create multiple contacts using a single API call
