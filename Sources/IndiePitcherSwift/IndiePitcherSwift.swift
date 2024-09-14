@@ -1,7 +1,9 @@
 import Foundation
 import AsyncHTTPClient
-import NIOHTTP1
+import NIO
 import NIOCore
+import NIOHTTP1
+import NIOFoundationCompat
 
 /// IndiePitcher SDK.
 /// This SDK is only intended for server-side Swift use. Do not embed the secret API key in client-side code for security reasons.
