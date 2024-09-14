@@ -5,6 +5,8 @@ Official [IndiePitcher](https://indiepitcher.com) SDK for Swift language.
 
 Provides a type safe layer on top IndiePitcher's public [REST API](https://docs.indiepitcher.com/api-reference/introduction).
 
+SDK documentation can be found [here](https://swiftpackageindex.com/indiepitcher/indiepitcher-swift/main/documentation/indiepitcherswift/indiepitcher).
+
 ## Instalation
 
 The SDK is designed to work with any framework built on top of Swift Nio - Vapor, Hummingbird, or AWS Lamda is supported.
