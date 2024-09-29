@@ -54,6 +54,29 @@ TODO
 
 
 ### AWS Lambda
-TODO
+This is how you can send an email from within an AWS Lambda function. See the [full example repository](https://github.com/IndiePitcher/IndiePitcherLambdaSwiftExample).
+```swift
+@main
+struct MyLambda: SimpleLambdaHandler {
+
+    private let indiePitcherApiKey = "sc_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+    func handle(_ event: String, context: LambdaContext) async throws -> String {
+
+        let indiePitcher = IndiePitcher(client: .shared, apiKey: indiePitcherApiKey)
+
+        let emailBody = """
+            This is an email sent from a **AWS Lambda function**!
+            """
+
+        try await indiePitcher.sendEmail(
+            data: .init(
+                to: "petr@indiepitcher.com", subject: "Hello from ASS Lambda!", body: emailBody,
+                bodyFormat: .markdown))
+
+        return "Email sent!"
+    }
+}
+```
 
 
