@@ -7,17 +7,17 @@ import NIOFoundationCompat
 
 /// IndiePitcher SDK.
 /// This SDK is only intended for server-side Swift use. Do not embed the secret API key in client-side code for security reasons.
-public struct IndiePitcher {
-    private let client: HTTPClient
+public struct IndiePitcher: Sendable {
+    private let client: HTTPClient // is sendable / thread-safe
     private let apiKey: String
     private let requestTimeout: TimeAmount = .seconds(30)
     private let maxResponseSize = 1024 * 1024 * 100
     
     /// Creates a new instance of IndiePitcher SDK
     /// - Parameters:
-    ///   - client: Vapor's client instance to use to perform network requests.
+    ///   - client: Vapor's client instance to use to perform network requests. Uses the  shared client by default.
     ///   - apiKey: Your project's secret key.
-    public init(client: HTTPClient, apiKey: String) {
+    public init(client: HTTPClient = .shared, apiKey: String) {
         self.client = client
         self.apiKey = apiKey
     }

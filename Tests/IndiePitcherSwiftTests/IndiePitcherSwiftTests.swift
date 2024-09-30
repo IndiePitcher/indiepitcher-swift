@@ -8,7 +8,7 @@ final class IndiePitcherSwiftTests: XCTestCase {
     var indiePitcher: IndiePitcher!
     
     override func setUp() async throws {
-        indiePitcher = IndiePitcher(client: .shared, apiKey: IP_SECRET_API_KEY)
+        indiePitcher = IndiePitcher(apiKey: IP_SECRET_API_KEY)
     }
     
     override func tearDown() async throws {
