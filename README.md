@@ -11,6 +11,16 @@ SDK documentation can be found [here](https://swiftpackageindex.com/indiepitcher
 
 The SDK is designed to work with any framework built on top of Swift Nio - Vapor, Hummingbird, or AWS Lamda is supported.
 
+Add the dependency to your `Package.swift` file
+```
+.package(url: "https://github.com/IndiePitcher/indiepitcher-swift.git", from: "1.0.0"),
+```
+
+Add IndiePitcher to appropriate target(s) of your project
+```
+.product(name: "IndiePitcherSwift", package: "indiepitcher-swift")
+```
+**Using the SDK:**
 - First, you need to get an API key. Go to the IndiePitcher dashboard, create a project, and generate a public API key.
 - Add the key to your `.env` file. Following examples will assume that you've added the key under `IP_SECRET_API_KEY` key.
 
