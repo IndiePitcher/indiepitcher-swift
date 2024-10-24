@@ -5,7 +5,7 @@ Official [IndiePitcher](https://indiepitcher.com) SDK for Swift language.
 
 Provides a type safe layer on top IndiePitcher's public [REST API](https://docs.indiepitcher.com/api-reference/introduction).
 
-SDK documentation can be found [here](https://swiftpackageindex.com/indiepitcher/indiepitcher-swift/main/documentation/indiepitcherswift/indiepitcher).
+SDK documentation can be found [here](https://swiftpackageindex.com/indiepitcher/indiepitcher-swift/1.1.0/documentation/indiepitcherswift/indiepitcher).
 
 ## Instalation
 
