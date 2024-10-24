@@ -32,6 +32,8 @@ swift package add-target-dependency IndiePitcherSwift --package indiepitcher-swi
 - First, you need to get an API key. Go to the IndiePitcher dashboard, create a project, and generate a public API key.
 - Add the key to your `.env` file. Following examples will assume that you've added the key under `IP_SECRET_API_KEY` key.
 
+<br/>
+
 ### Vapor 4
 Create a new file, something like `Application+IndiePitcher.swift` and paste in following code
 ```swift
@@ -66,10 +68,45 @@ app.get { req async in
 }
 ```
 
+<br/>
 
 ### Hummingbird 2
-TODO
+```swift
+public func buildApplication(_ arguments: some AppArguments) async throws
+    -> some ApplicationProtocol
+{
+    let environment = try await Environment().merging(with: .dotEnv())
 
+    let logger = {
+        var logger = Logger(label: "HummingbirdExample")
+        logger.logLevel =
+            arguments.logLevel ?? environment.get("LOG_LEVEL").flatMap {
+                Logger.Level(rawValue: $0)
+            } ?? .info
+        return logger
+    }()
+
+    guard let apiKey = environment.get("INDIEPITCHER_SECRET_KEY") else {
+        preconditionFailure("Requires \"INDIEPITCHER_SECRET_KEY\" environment variable")
+    }
+
+    let indiePitcher = IndiePitcher(apiKey: apiKey)
+
+    let router = buildRouter(indiePitcher: indiePitcher)
+    let app = Application(
+        router: router,
+        configuration: .init(
+            address: .hostname(arguments.hostname, port: arguments.port),
+            serverName: "HummingbirdExample"
+        ),
+        logger: logger
+    )
+    return app
+}
+```
+See the [full example repository](https://github.com/IndiePitcher/HummingbirdExample).
+
+<br/>
 
 ### AWS Lambda
 This is how you can send an email from within an AWS Lambda function. See the [full example repository](https://github.com/IndiePitcher/IndiePitcherLambdaSwiftExample).
