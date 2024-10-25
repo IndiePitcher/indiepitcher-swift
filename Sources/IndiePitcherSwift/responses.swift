@@ -67,3 +67,7 @@ public struct PagedDataResponse<T: Codable>: Codable {
     public var metadata: PageMetadata
 }
 
+struct ErrorResponse: Codable {
+    var reason: String
+    var error: Bool
+}

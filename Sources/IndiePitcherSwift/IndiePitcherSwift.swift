@@ -5,6 +5,12 @@ import NIOCore
 import NIOHTTP1
 import NIOFoundationCompat
 
+extension HTTPClientResponse {
+    var isOk: Bool {
+        status.code >= 200 && status.code < 400
+    }
+}
+
 /// IndiePitcher SDK.
 /// This SDK is only intended for server-side Swift use. Do not embed the secret API key in client-side code for security reasons.
 public struct IndiePitcher: Sendable {
@@ -61,6 +67,12 @@ public struct IndiePitcher: Sendable {
         
         let response = try await client.execute(request, timeout: requestTimeout)
         let responseData = try await response.body.collect(upTo: maxResponseSize)
+        
+        guard response.isOk else {
+            let error = try? jsonDecoder.decode(ErrorResponse.self, from: responseData)
+            throw IndiePitcherRequestError(statusCode: response.status.code, reason: error?.reason ?? "Unknown reason")
+        }
+        
         return try self.jsonDecoder.decode(T.self, from: responseData)
     }
     
@@ -76,6 +88,12 @@ public struct IndiePitcher: Sendable {
         
         let response = try await client.execute(request, timeout: requestTimeout)
         let responseData = try await response.body.collect(upTo: maxResponseSize)
+        
+        guard response.isOk else {
+            let error = try? jsonDecoder.decode(ErrorResponse.self, from: responseData)
+            throw IndiePitcherRequestError(statusCode: response.status.code, reason: error?.reason ?? "Unknown reason")
+        }
+        
         return try self.jsonDecoder.decode(T.self, from: responseData)
     }
     
@@ -89,6 +107,12 @@ public struct IndiePitcher: Sendable {
         
         let response = try await client.execute(request, timeout: requestTimeout)
         let responseData = try await response.body.collect(upTo: maxResponseSize)
+        
+        guard response.isOk else {
+            let error = try? jsonDecoder.decode(ErrorResponse.self, from: responseData)
+            throw IndiePitcherRequestError(statusCode: response.status.code, reason: error?.reason ?? "Unknown reason")
+        }
+        
         return try self.jsonDecoder.decode(T.self, from: responseData)
     }
     

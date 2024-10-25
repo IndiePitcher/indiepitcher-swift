@@ -344,7 +344,6 @@ public struct MailingList: Codable {
     public var numSubscribers: Int
 }
 
-
 /// A portal session that allows a contact to manage their email list subscriptions when redirected to returned `url`. A session is valid for 30 minutes.
 public struct MailingListPortalSession: Codable {
     public init(url: URL, expiresAt: Date, returnURL: URL) {

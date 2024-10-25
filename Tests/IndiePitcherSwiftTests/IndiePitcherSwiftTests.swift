@@ -12,7 +12,14 @@ final class IndiePitcherSwiftTests: XCTestCase {
     }
     
     override func tearDown() async throws {
-        // no need to shut down shared client
+        // work around API rate limiting
+        try await Task.sleep(for: .seconds(1))
+    }
+    
+    func testThrowRequestError() async {
+        let indiePitcherx = IndiePitcher(apiKey: "fake")
+        await expect({try await indiePitcherx.listMailingLists()})
+            .to(throwError(IndiePitcherRequestError(statusCode: 401, reason: "Unauthorized")))
     }
     
     func testSendTransactionalEmailMarkdown() async throws {
