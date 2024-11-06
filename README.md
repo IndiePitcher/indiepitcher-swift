@@ -64,9 +64,20 @@ extension Application {
 This will give you easy access to the SDK methods using `application` and `request`.
 ```swift
 app.get { req async in
-    try await req.indiePitcher.listContacts()
+
+    let emailBody = """
+    This is a sample body that supports **markdown**. Plain html is also supported.
+    """
+ 
+    try await indiePitcher.sendEmail(
+            data: .init(
+                to: "petr@indiepitcher.com", subject: "Hello from AWS Lambda!", body: emailBody,
+                bodyFormat: .markdown))
+
+    return "ok"
 }
 ```
+See the [full example repository](https://github.com/IndiePitcher/VaporExample).
 
 <br/>
 
@@ -126,7 +137,7 @@ struct MyLambda: SimpleLambdaHandler {
 
         try await indiePitcher.sendEmail(
             data: .init(
-                to: "petr@indiepitcher.com", subject: "Hello from ASS Lambda!", body: emailBody,
+                to: "petr@indiepitcher.com", subject: "Hello from AWS Lambda!", body: emailBody,
                 bodyFormat: .markdown))
 
         return "Email sent!"
