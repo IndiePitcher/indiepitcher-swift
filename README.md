@@ -66,12 +66,12 @@ This will give you easy access to the SDK methods using `application` and `reque
 app.get { req async in
 
     let emailBody = """
-    This is a sample body that supports **markdown**. Plain html is also supported.
+    This is a sample body that supports **markdown**. HTML is also supported.
     """
  
     try await indiePitcher.sendEmail(
             data: .init(
-                to: "petr@indiepitcher.com", subject: "Hello from AWS Lambda!", body: emailBody,
+                to: "petr@indiepitcher.com", subject: "Hello from Vapor!", body: emailBody,
                 bodyFormat: .markdown))
 
     return "ok"
