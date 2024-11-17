@@ -202,9 +202,9 @@ public struct IndiePitcher: Sendable {
     
     /// Generates a new public URL for a contact with provided email to manage their mailing list subscriptions.
     /// - Parameters:
-    ///   - contactEmail: The email of a contact this session is for.
+    ///   - contactEmail: The email of a contact in your project's contact list, who to create the portal session for.
     ///   - returnURL: The URL to redirect to when the user is done editing their mailing list, or when the session has expired.
-    /// - Returns: Newly created URL session.
+    /// - Returns: The URL to redirect your user to, and the expiration date of the session.
     public func createMailingListsPortalSession(contactEmail: String, returnURL: URL) async throws -> DataResponse<MailingListPortalSession> {
         
         struct Payload: Codable {
