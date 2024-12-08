@@ -7,7 +7,7 @@ import NIOFoundationCompat
 
 extension HTTPClientResponse {
     var isOk: Bool {
-        status.code >= 200 && status.code < 400
+        status.code >= 200 && status.code < 300
     }
 }
 
