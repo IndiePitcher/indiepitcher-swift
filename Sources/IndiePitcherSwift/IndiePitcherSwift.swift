@@ -129,7 +129,12 @@ public struct IndiePitcher: Sendable {
     /// - Parameter contacts: Contact properties
     /// - Returns: A generic empty response.
     @discardableResult public func addContacts(contacts: [CreateContact]) async throws -> EmptyResposne {
-        try await post(path: "/contacts/create_many", body: contacts)
+        
+        struct Payload: Codable {
+            let contacts: [CreateContact]
+        }
+        
+        return try await post(path: "/contacts/create_many", body: Payload(contacts: contacts))
     }
     
     /// Updates a contact with given email address. This call will fail if a contact with provided email does not exist, use `addContact` instead in such case.

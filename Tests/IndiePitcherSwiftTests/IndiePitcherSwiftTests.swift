@@ -24,7 +24,7 @@ final class IndiePitcherSwiftTests: XCTestCase {
     
     func testSendTransactionalEmailMarkdown() async throws {
         
-        try await indiePitcher.sendEmail(data: .init(to: "petr@indiepitcher.com",
+        try await indiePitcher.sendEmail(data: .init(to: "petr@example.com",
                                            subject: "Test email from IP Swift SDK unit tests",
                                            body: "This is a test body that supports **markdown**.",
                                            bodyFormat: .markdown))
@@ -32,23 +32,23 @@ final class IndiePitcherSwiftTests: XCTestCase {
     
     func testGetMailingLists() async throws {
         let listsResponse = try await indiePitcher.listMailingLists()
-        expect(listsResponse.metadata.total) == 2
-        expect(listsResponse.data.count) == 2
+        expect(listsResponse.metadata.total) == 3
+        expect(listsResponse.data.count) == 3
     }
     
     func testSendMarketingEmailToList() async throws {
         try await indiePitcher.sendEmailToMailingList(data: .init(subject: "Test marketing email from IP Swift SDK unit tests",
                                                         body: "This is a test body of a marketing email that supports **markdown**.",
                                                         bodyFormat: .markdown,
-                                                        list: "test_list_1"))
+                                                        list: "integration-tests"))
     }
     
     func testSendEmailToContact() async throws {
-        try await indiePitcher.sendEmailToContact(data: .init(contactEmail: "petr@indiepitcher.com",
+        try await indiePitcher.sendEmailToContact(data: .init(contactEmail: "petr@example.com",
                                                               subject: "Test personalized contact email from IP Swift SDK unit tests",
                                                               body: "This is a test body of a personalized transactional email that supports **markdown**.",
                                                               bodyFormat: .markdown,
-                                                              list: "test_list_1",
+                                                              list: "integration-tests",
                                                               delaySeconds: 60))
     }
     
@@ -58,6 +58,13 @@ final class IndiePitcherSwiftTests: XCTestCase {
                                                          subscribedToLists: ["test_list_1", "test_list_2"]))
 
         try await indiePitcher.deleteContact(email: email)
+    }
+    
+    func testAddMultipleContacts() async throws {
+        
+        try await indiePitcher.addContacts(contacts: [.init(email: "test@example.com"), .init(email: "test2@example.com")])
+        try await indiePitcher.deleteContact(email: "test@example.com")
+        try await indiePitcher.deleteContact(email: "test2@example.com")
     }
     
     func testCreatePortalSession() async throws {
