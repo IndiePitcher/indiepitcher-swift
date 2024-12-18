@@ -1,4 +1,4 @@
-public struct IndiePitcherRequestError: Error, Equatable {
+public struct IndiePitcherRequestError: Error, Equatable, Sendable {
     var statusCode: UInt
     var reason: String
     

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a response returning data.
-public struct DataResponse<T: Codable>: Codable {
+public struct DataResponse<T: Codable & Sendable>: Codable, Sendable {
     
     public init(data: T) {
         self.success = true
@@ -34,7 +34,7 @@ public struct EmptyResposne: Codable {
 }
 
 /// Represents a response returning paginated data.
-public struct PagedDataResponse<T: Codable>: Codable {
+public struct PagedDataResponse<T: Codable & Sendable>: Codable, Sendable {
     public init(data: [T], metadata: PagedDataResponse<T>.PageMetadata) {
         self.success = true
         self.data = data
@@ -42,7 +42,7 @@ public struct PagedDataResponse<T: Codable>: Codable {
     }
     
     /// Paging metadata
-    public struct PageMetadata: Codable {
+    public struct PageMetadata: Codable, Sendable {
         public init(page: Int, per: Int, total: Int) {
             self.page = page
             self.per = per
@@ -67,7 +67,7 @@ public struct PagedDataResponse<T: Codable>: Codable {
     public var metadata: PageMetadata
 }
 
-struct ErrorResponse: Codable {
+struct ErrorResponse: Codable, Sendable {
     var reason: String
     var error: Bool
 }
