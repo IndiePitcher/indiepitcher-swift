@@ -297,13 +297,17 @@ public struct SendEmailToMailingList: Codable, Sendable {
     ///   - list: The email will be sent to contacts subscribed to this list. Pass "important" to send the email to all of your contacts.
     ///   - delaySeconds: Delay sending of this email by the amount of seconds you provide.
     ///   - delayUntilDate: Delay sending of this email by the amount of seconds you provide.
-    public init(subject: String, body: String, bodyFormat: EmailBodyFormat, list: String = "important", delaySeconds: TimeInterval? = nil, delayUntilDate: Date? = nil) {
+    ///   - trackEmailOpens: Whether to track email opens. Allow you to overwrite the project's global setting.
+    ///   - trackEmailLinkClicks: Whether to track email opens. Allow you to overwrite the project's global setting.
+    public init(subject: String, body: String, bodyFormat: EmailBodyFormat, list: String = "important", delaySeconds: TimeInterval? = nil, delayUntilDate: Date? = nil, trackEmailOpens: Bool? = nil, trackEmailLinkClicks: Bool? = nil) {
         self.subject = subject
         self.body = body
         self.bodyFormat = bodyFormat
         self.list = list
         self.delaySeconds = delaySeconds
         self.delayUntilDate = delayUntilDate
+        self.trackEmailOpens = trackEmailOpens
+        self.trackEmailLinkClicks = trackEmailLinkClicks
     }
     
     /// The subject of the email. Supports personalization.
@@ -331,7 +335,7 @@ public struct SendEmailToMailingList: Codable, Sendable {
     var trackEmailOpens: Bool?
     
     /// Whether to track email opens.
-    /// 
+    ///
     /// Allow you to overwrite the project's global setting.
     /// - Default: `nil`- Uses the project's global setting.
     var trackEmailLinkClicks: Bool?
