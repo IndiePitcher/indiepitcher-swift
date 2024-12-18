@@ -23,7 +23,7 @@ public struct DataResponse<T: Codable & Sendable>: Codable, Sendable {
 }
 
 /// Represents a response returning no useful data.
-public struct EmptyResposne: Codable {
+public struct EmptyResposne: Codable, Sendable {
     
     public init() {
         self.success = true
