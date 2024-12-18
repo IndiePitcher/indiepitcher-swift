@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Petr Pavlik on 17.08.2024.
-//
-
 import Foundation
 
 /// The format of the email body
@@ -25,7 +18,7 @@ public enum CustomContactPropertyValue: Codable, Equatable, Sendable {
     case bool(Bool)
     /// A date property
     case date(Date)
-    
+
     // Coding keys to differentiate between the cases
     private enum CodingKeys: String, CodingKey {
         case string
@@ -33,7 +26,7 @@ public enum CustomContactPropertyValue: Codable, Equatable, Sendable {
         case bool
         case date
     }
-    
+
     // Encoding function
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -48,38 +41,47 @@ public enum CustomContactPropertyValue: Codable, Equatable, Sendable {
             try container.encode(value)
         }
     }
-    
+
     // Decoding function
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        
+
         if let value = try? container.decode(Date.self) {
             self = .date(value)
             return
         }
-        
+
         if let value = try? container.decode(Bool.self) {
             self = .bool(value)
             return
         }
-        
+
         if let value = try? container.decode(Double.self) {
             self = .number(value)
             return
         }
-        
+
         if let value = try? container.decode(String.self) {
             self = .string(value)
             return
         }
-        
-        throw DecodingError.dataCorruptedError(in: container, debugDescription: "Data doesn't match either string, number, bool, or date.")
+
+        throw DecodingError.dataCorruptedError(
+            in: container,
+            debugDescription:
+                "Data doesn't match either string, number, bool, or date.")
     }
 }
 
 /// A contact in the mailing list
 public struct Contact: Codable, Sendable {
-    public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, hardBouncedAt: Date? = nil, subscribedToLists: [String], customProperties: [String : CustomContactPropertyValue], languageCode: String? = nil) {
+    public init(
+        email: String, userId: String? = nil, avatarUrl: String? = nil,
+        name: String? = nil, hardBouncedAt: Date? = nil,
+        subscribedToLists: [String],
+        customProperties: [String: CustomContactPropertyValue],
+        languageCode: String? = nil
+    ) {
         self.email = email
         self.userId = userId
         self.avatarUrl = avatarUrl
@@ -89,7 +91,7 @@ public struct Contact: Codable, Sendable {
         self.customProperties = customProperties
         self.languageCode = languageCode
     }
-    
+
     /// The email of the contact
     public var email: String
     /// The user id of the contact
@@ -110,7 +112,7 @@ public struct Contact: Codable, Sendable {
 
 /// The payload to create a new contact
 public struct CreateContact: Codable, Sendable {
-    
+
     /// Initializer
     /// - Parameters:
     ///   - email: The email of the contact.
@@ -122,7 +124,13 @@ public struct CreateContact: Codable, Sendable {
     ///   - subscribedToLists: The list of mailing lists the contact should be subscribed to. Use the `name` field of the lists.
     ///   - customProperties: The custom properties of the contact. Custom properties must be first defined in the IndiePitcher dashboard.
     ///   - ignoreListSubscriptionsWhenUpdating: Whether to ignore subscribedToLists field if the contact already exists and `updateIfExists` is set to `true`. Useful to avoid accidentally resubscribing a contact to lists they unsubscribed before. Default value is `true`.
-    public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, languageCode: String? = nil, updateIfExists: Bool? = nil, subscribedToLists: Set<String>? = nil, customProperties: [String : CustomContactPropertyValue]? = nil, ignoreListSubscriptionsWhenUpdating: Bool? = nil) {
+    public init(
+        email: String, userId: String? = nil, avatarUrl: String? = nil,
+        name: String? = nil, languageCode: String? = nil,
+        updateIfExists: Bool? = nil, subscribedToLists: Set<String>? = nil,
+        customProperties: [String: CustomContactPropertyValue]? = nil,
+        ignoreListSubscriptionsWhenUpdating: Bool? = nil
+    ) {
         self.email = email
         self.userId = userId
         self.avatarUrl = avatarUrl
@@ -131,9 +139,10 @@ public struct CreateContact: Codable, Sendable {
         self.updateIfExists = updateIfExists
         self.subscribedToLists = subscribedToLists
         self.customProperties = customProperties
-        self.ignoreListSubscriptionsWhenUpdating = ignoreListSubscriptionsWhenUpdating
+        self.ignoreListSubscriptionsWhenUpdating =
+            ignoreListSubscriptionsWhenUpdating
     }
-    
+
     /// The email of the contact.
     public var email: String
     /// The user id of the contact.
@@ -156,20 +165,20 @@ public struct CreateContact: Codable, Sendable {
 
 /// The payload to create multiple contacts using a single API call
 public struct CreateMultipleContacts: Codable, Sendable {
-    
+
     /// Initializer
     /// - Parameter contacts: The list of contacts to create
     public init(contacts: [CreateContact]) {
         self.contacts = contacts
     }
-    
+
     /// The list of contacts to create
     public var contacts: [CreateContact]
 }
 
 /// The payload to update a contact in the mailing list. The email is required to identify the contact.
 public struct UpdateContact: Codable, Sendable {
-    
+
     /// Initializer
     /// - Parameters:
     ///   - email: The email of the contact.
@@ -180,7 +189,13 @@ public struct UpdateContact: Codable, Sendable {
     ///   - addedListSubscripitons: The list of mailing lists to subscribe the contact to. Use the `name` field of the lists.
     ///   - removedListSubscripitons: The list of mailing lists unsubscribe the contact from. Use the `name` field of the lists.
     ///   - customProperties: The custom properties of the contact. Custom properties must be first defined in the IndiePitcher dashboard. Pass 'nil' to remove a custom property.
-    public init(email: String, userId: String? = nil, avatarUrl: String? = nil, name: String? = nil, languageCode: String? = nil, addedListSubscripitons: Set<String>? = nil, removedListSubscripitons: Set<String>? = nil, customProperties: [String : CustomContactPropertyValue?]? = nil) {
+    public init(
+        email: String, userId: String? = nil, avatarUrl: String? = nil,
+        name: String? = nil, languageCode: String? = nil,
+        addedListSubscripitons: Set<String>? = nil,
+        removedListSubscripitons: Set<String>? = nil,
+        customProperties: [String: CustomContactPropertyValue?]? = nil
+    ) {
         self.email = email
         self.userId = userId
         self.avatarUrl = avatarUrl
@@ -190,7 +205,7 @@ public struct UpdateContact: Codable, Sendable {
         self.removedListSubscripitons = removedListSubscripitons
         self.customProperties = customProperties
     }
-    
+
     /// The email of the contact.
     public var email: String
     /// The user id of the contact.
@@ -211,36 +226,38 @@ public struct UpdateContact: Codable, Sendable {
 
 /// Payload of send transactional email request.
 public struct SendEmail: Codable, Sendable {
-    
+
     /// Initializer
     /// - Parameters:
     ///   - to: Can be just an email "john@example.com", or an email with a neme "John Doe <john@example.com>"
     ///   - subject: The subject of the email.
     ///   - body: The body of the email.
     ///   - bodyFormat: The format of the body of the email. Can be `markdown` or `html`.
-    public init(to: String, subject: String, body: String, bodyFormat: EmailBodyFormat) {
+    public init(
+        to: String, subject: String, body: String, bodyFormat: EmailBodyFormat
+    ) {
         self.to = to
         self.subject = subject
         self.body = body
         self.bodyFormat = bodyFormat
     }
-    
+
     /// Can be just an email "john@example.com", or an email with a neme "John Doe <john@example.com>"
     public var to: String
-    
+
     /// The subject of the email.
     public var subject: String
-    
+
     /// The body of the email.
     public var body: String
-    
+
     /// The format of the body of the email. Can be `markdown` or `html`.
     public var bodyFormat: EmailBodyFormat
 }
 
 /// Send an email to one of more registered contacts.
 public struct SendEmailToContact: Codable, Sendable {
-    
+
     /// Initializer
     /// - Parameters:
     ///   - contactEmail: The email of the contact to send.
@@ -251,7 +268,12 @@ public struct SendEmailToContact: Codable, Sendable {
     ///   - list: Specify a list the contact(s) can unsubscribe from if they don't wish to receive further emails like this. The contact(s) must be subscribed to this list. Pass "important" to provide a list the contact(s) cannot unsubscribe from.
     ///   - delaySeconds: Delay sending of this email by the amount of seconds you provide.
     ///   - delayUntilDate: Delay sending of this email until specified date.
-    public init(contactEmail: String? = nil, contactEmails: [String]? = nil, subject: String, body: String, bodyFormat: EmailBodyFormat, list: String = "important", delaySeconds: TimeInterval? = nil, delayUntilDate: Date? = nil) {
+    public init(
+        contactEmail: String? = nil, contactEmails: [String]? = nil,
+        subject: String, body: String, bodyFormat: EmailBodyFormat,
+        list: String = "important", delaySeconds: TimeInterval? = nil,
+        delayUntilDate: Date? = nil
+    ) {
         self.contactEmail = contactEmail
         self.contactEmails = contactEmails
         self.subject = subject
@@ -261,34 +283,34 @@ public struct SendEmailToContact: Codable, Sendable {
         self.delaySeconds = delaySeconds
         self.delayUntilDate = delayUntilDate
     }
-    
+
     /// The email of the contact to send.
     public var contactEmail: String?
-    
+
     /// Allows you to send an email to multiple contacts using a single request.
     public var contactEmails: [String]?
-    
+
     /// The subject of the email. Supports personalization.
     public var subject: String
-    
+
     /// The body of the email. Both HTML and markdown body do support personalization.
     public var body: String
-    
+
     /// The format of the body of the email. Can be `markdown` or `html`.
     public var bodyFormat: EmailBodyFormat
-    
+
     /// Specify a list the contact(s) can unsubscribe from if they don't wish to receive further emails like this. The contact(s) must be subscribed to this list. Pass "important" to provide a list the contact(s) cannot unsubscribe from.
     public var list: String
-    
+
     /// Delay sending of this email by the amount of seconds you provide.
     public var delaySeconds: TimeInterval?
-    
+
     /// Delay sending of this email until specified date.
     public var delayUntilDate: Date?
 }
 
 public struct SendEmailToMailingList: Codable, Sendable {
-    
+
     /// Initializer
     /// - Parameters:
     ///   - subject: The subject of the email. Supports personalization.
@@ -299,7 +321,12 @@ public struct SendEmailToMailingList: Codable, Sendable {
     ///   - delayUntilDate: Delay sending of this email by the amount of seconds you provide.
     ///   - trackEmailOpens: Whether to track email opens. Allow you to overwrite the project's global setting.
     ///   - trackEmailLinkClicks: Whether to track email opens. Allow you to overwrite the project's global setting.
-    public init(subject: String, body: String, bodyFormat: EmailBodyFormat, list: String = "important", delaySeconds: TimeInterval? = nil, delayUntilDate: Date? = nil, trackEmailOpens: Bool? = nil, trackEmailLinkClicks: Bool? = nil) {
+    public init(
+        subject: String, body: String, bodyFormat: EmailBodyFormat,
+        list: String = "important", delaySeconds: TimeInterval? = nil,
+        delayUntilDate: Date? = nil, trackEmailOpens: Bool? = nil,
+        trackEmailLinkClicks: Bool? = nil
+    ) {
         self.subject = subject
         self.body = body
         self.bodyFormat = bodyFormat
@@ -309,31 +336,31 @@ public struct SendEmailToMailingList: Codable, Sendable {
         self.trackEmailOpens = trackEmailOpens
         self.trackEmailLinkClicks = trackEmailLinkClicks
     }
-    
+
     /// The subject of the email. Supports personalization.
     public var subject: String
-    
+
     /// The body of the email. Both HTML and markdown body do support personalization.
     public var body: String
-    
+
     /// The format of the body of the email. Can be `markdown` or `html`.
     public var bodyFormat: EmailBodyFormat
-    
+
     /// The email will be sent to contacts subscribed to this list. Pass "important" to send the email to all of your contacts.
     public var list: String
-    
+
     /// Delay sending of this email by the amount of seconds you provide.
     public var delaySeconds: TimeInterval?
-    
+
     /// Delay sending of this email until specified date.
     public var delayUntilDate: Date?
-    
+
     /// Whether to track email opens.
     ///
     /// Allow you to overwrite the project's global setting.
     /// - Default: `nil`- Uses the project's global setting.
     var trackEmailOpens: Bool?
-    
+
     /// Whether to track email opens.
     ///
     /// Allow you to overwrite the project's global setting.
@@ -343,19 +370,19 @@ public struct SendEmailToMailingList: Codable, Sendable {
 
 /// Represents a mailing list contacts can subscribe to, such as `Monthly newsletter` or `Onboarding`.
 public struct MailingList: Codable, Sendable {
-    
+
     public init(name: String, title: String, numSubscribers: Int) {
         self.name = name
         self.title = title
         self.numSubscribers = numSubscribers
     }
-    
+
     /// The unique name of the mailing list meant to be used by the public API. Not intended to be be shown to the end users, that's what `title` is for.
     public var name: String
-    
+
     /// A human readable name of the mailing list.
     public var title: String
-    
+
     /// The  number of contacts subscribed to this list.
     public var numSubscribers: Int
 }
@@ -367,13 +394,13 @@ public struct MailingListPortalSession: Codable, Sendable {
         self.expiresAt = expiresAt
         self.returnURL = returnURL
     }
-    
+
     /// The URL under which the user can manage their list subscriptions.
     public var url: URL
-    
+
     /// Specified until when will the URL be valid
     public var expiresAt: Date
-    
+
     /// URL to redirect the user to when they tap on that they're cone editing their lists, or when the session is expired.
     public var returnURL: URL
 }

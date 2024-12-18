@@ -1,34 +1,25 @@
-//
-//  File.swift
-//  
-//
-//  Created by Petr Pavlik on 17.08.2024.
-//
-
-import Foundation
-
 /// Represents a response returning data.
 public struct DataResponse<T: Codable & Sendable>: Codable, Sendable {
-    
+
     public init(data: T) {
         self.success = true
         self.data = data
     }
-    
+
     /// Always true
     public var success: Bool
-    
+
     /// Returned data
     public var data: T
 }
 
 /// Represents a response returning no useful data.
 public struct EmptyResposne: Codable, Sendable {
-    
+
     public init() {
         self.success = true
     }
-    
+
     /// Always true
     public var success: Bool
 }
@@ -40,7 +31,7 @@ public struct PagedDataResponse<T: Codable & Sendable>: Codable, Sendable {
         self.data = data
         self.metadata = metadata
     }
-    
+
     /// Paging metadata
     public struct PageMetadata: Codable, Sendable {
         public init(page: Int, per: Int, total: Int) {
@@ -48,7 +39,7 @@ public struct PagedDataResponse<T: Codable & Sendable>: Codable, Sendable {
             self.per = per
             self.total = total
         }
-        
+
         /// Page index, indexed from 1.
         public let page: Int
         /// Number of results per page
@@ -56,13 +47,13 @@ public struct PagedDataResponse<T: Codable & Sendable>: Codable, Sendable {
         /// Total number of results.
         public let total: Int
     }
-    
+
     /// Always true
     public var success: Bool
-    
+
     /// Returned results
     public var data: [T]
-    
+
     /// Paging metadata
     public var metadata: PageMetadata
 }
