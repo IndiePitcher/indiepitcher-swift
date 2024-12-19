@@ -268,11 +268,14 @@ public struct SendEmailToContact: Codable, Sendable {
     ///   - list: Specify a list the contact(s) can unsubscribe from if they don't wish to receive further emails like this. The contact(s) must be subscribed to this list. Pass "important" to provide a list the contact(s) cannot unsubscribe from.
     ///   - delaySeconds: Delay sending of this email by the amount of seconds you provide.
     ///   - delayUntilDate: Delay sending of this email until specified date.
+    ///   - trackEmailOpens: Whether to track email opens. Allow you to overwrite the project's global setting.
+    ///   - trackEmailLinkClicks: Whether to track email opens. Allow you to overwrite the project's global setting.
     public init(
         contactEmail: String? = nil, contactEmails: [String]? = nil,
         subject: String, body: String, bodyFormat: EmailBodyFormat,
         list: String = "important", delaySeconds: TimeInterval? = nil,
-        delayUntilDate: Date? = nil
+        delayUntilDate: Date? = nil, trackEmailOpens: Bool? = nil,
+        trackEmailLinkClicks: Bool? = nil
     ) {
         self.contactEmail = contactEmail
         self.contactEmails = contactEmails
@@ -307,6 +310,18 @@ public struct SendEmailToContact: Codable, Sendable {
 
     /// Delay sending of this email until specified date.
     public var delayUntilDate: Date?
+
+    /// Whether to track email opens.
+    ///
+    /// Allow you to overwrite the project's global setting.
+    /// - Default: `nil`- Uses the project's global setting.
+    public var trackEmailOpens: Bool?
+
+    /// Whether to track email opens.
+    ///
+    /// Allow you to overwrite the project's global setting.
+    /// - Default: `nil`- Uses the project's global setting.
+    public var trackEmailLinkClicks: Bool?
 }
 
 public struct SendEmailToMailingList: Codable, Sendable {
