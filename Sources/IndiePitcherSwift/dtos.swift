@@ -233,8 +233,12 @@ public struct SendEmail: Codable, Sendable {
     ///   - subject: The subject of the email.
     ///   - body: The body of the email.
     ///   - bodyFormat: The format of the body of the email. Can be `markdown` or `html`.
+    ///   - trackEmailOpens: Whether to track email opens. Allow you to overwrite the project's global setting.
+    ///   - trackEmailLinkClicks: Whether to track email opens. Allow you to overwrite the project's global setting.
     public init(
-        to: String, subject: String, body: String, bodyFormat: EmailBodyFormat
+        to: String, subject: String, body: String, bodyFormat: EmailBodyFormat,
+        trackEmailOpens: Bool? = nil,
+        trackEmailLinkClicks: Bool? = nil
     ) {
         self.to = to
         self.subject = subject
@@ -253,6 +257,18 @@ public struct SendEmail: Codable, Sendable {
 
     /// The format of the body of the email. Can be `markdown` or `html`.
     public var bodyFormat: EmailBodyFormat
+
+    /// Whether to track email opens.
+    ///
+    /// Allow you to overwrite the project's global setting.
+    /// - Default: `nil`- Uses the project's global setting.
+    public var trackEmailOpens: Bool?
+
+    /// Whether to track email opens.
+    ///
+    /// Allow you to overwrite the project's global setting.
+    /// - Default: `nil`- Uses the project's global setting.
+    public var trackEmailLinkClicks: Bool?
 }
 
 /// Send an email to one of more registered contacts.
