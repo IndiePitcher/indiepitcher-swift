@@ -359,13 +359,13 @@ public struct SendEmailToMailingList: Codable, Sendable {
     ///
     /// Allow you to overwrite the project's global setting.
     /// - Default: `nil`- Uses the project's global setting.
-    var trackEmailOpens: Bool?
+    public var trackEmailOpens: Bool?
 
     /// Whether to track email opens.
     ///
     /// Allow you to overwrite the project's global setting.
     /// - Default: `nil`- Uses the project's global setting.
-    var trackEmailLinkClicks: Bool?
+    public var trackEmailLinkClicks: Bool?
 }
 
 /// Represents a mailing list contacts can subscribe to, such as `Monthly newsletter` or `Onboarding`.
