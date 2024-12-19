@@ -234,7 +234,7 @@ public struct SendEmail: Codable, Sendable {
     ///   - body: The body of the email.
     ///   - bodyFormat: The format of the body of the email. Can be `markdown` or `html`.
     ///   - trackEmailOpens: Whether to track email opens. Allow you to overwrite the project's global setting.
-    ///   - trackEmailLinkClicks: Whether to track email opens. Allow you to overwrite the project's global setting.
+    ///   - trackEmailLinkClicks: Whether to track when a users taps on a link in the email. Allow you to overwrite the project's global setting.
     public init(
         to: String, subject: String, body: String, bodyFormat: EmailBodyFormat,
         trackEmailOpens: Bool? = nil,
@@ -264,7 +264,7 @@ public struct SendEmail: Codable, Sendable {
     /// - Default: `nil`- Uses the project's global setting.
     public var trackEmailOpens: Bool?
 
-    /// Whether to track email opens.
+    /// Whether to track when a users taps on a link in the email.
     ///
     /// Allow you to overwrite the project's global setting.
     /// - Default: `nil`- Uses the project's global setting.
@@ -285,7 +285,7 @@ public struct SendEmailToContact: Codable, Sendable {
     ///   - delaySeconds: Delay sending of this email by the amount of seconds you provide.
     ///   - delayUntilDate: Delay sending of this email until specified date.
     ///   - trackEmailOpens: Whether to track email opens. Allow you to overwrite the project's global setting.
-    ///   - trackEmailLinkClicks: Whether to track email opens. Allow you to overwrite the project's global setting.
+    ///   - trackEmailLinkClicks: Whether to track when a users taps on a link in the email. Allow you to overwrite the project's global setting.
     public init(
         contactEmail: String? = nil, contactEmails: [String]? = nil,
         subject: String, body: String, bodyFormat: EmailBodyFormat,
@@ -333,7 +333,7 @@ public struct SendEmailToContact: Codable, Sendable {
     /// - Default: `nil`- Uses the project's global setting.
     public var trackEmailOpens: Bool?
 
-    /// Whether to track email opens.
+    /// Whether to track when a users taps on a link in the email.
     ///
     /// Allow you to overwrite the project's global setting.
     /// - Default: `nil`- Uses the project's global setting.
@@ -351,7 +351,7 @@ public struct SendEmailToMailingList: Codable, Sendable {
     ///   - delaySeconds: Delay sending of this email by the amount of seconds you provide.
     ///   - delayUntilDate: Delay sending of this email by the amount of seconds you provide.
     ///   - trackEmailOpens: Whether to track email opens. Allow you to overwrite the project's global setting.
-    ///   - trackEmailLinkClicks: Whether to track email opens. Allow you to overwrite the project's global setting.
+    ///   - trackEmailLinkClicks: Whether to track when a users taps on a link in the email. Allow you to overwrite the project's global setting.
     public init(
         subject: String, body: String, bodyFormat: EmailBodyFormat,
         list: String = "important", delaySeconds: TimeInterval? = nil,
@@ -392,7 +392,7 @@ public struct SendEmailToMailingList: Codable, Sendable {
     /// - Default: `nil`- Uses the project's global setting.
     public var trackEmailOpens: Bool?
 
-    /// Whether to track email opens.
+    /// Whether to track when a users taps on a link in the email.
     ///
     /// Allow you to overwrite the project's global setting.
     /// - Default: `nil`- Uses the project's global setting.
