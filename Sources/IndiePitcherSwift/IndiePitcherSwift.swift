@@ -16,16 +16,19 @@ extension HTTPClientResponse {
 public struct IndiePitcher: Sendable {
     private let client: HTTPClient  // is sendable / thread-safe
     private let apiKey: String
+    private let baseURL: String
     private let requestTimeout: TimeAmount = .seconds(30)
     private let maxResponseSize = 1024 * 1024 * 100
 
     /// Creates a new instance of IndiePitcher SDK
     /// - Parameters:
-    ///   - client: Vapor's client instance to use to perform network requests. Uses the  shared client by default.
+    ///   - client: Vapor's client instance to use to perform network requests. Uses the shared client by default.
     ///   - apiKey: Your project's secret key.
-    public init(client: HTTPClient = .shared, apiKey: String) {
+    ///   - baseURL: The base URL for the API. Defaults to "https://api.indiepitcher.com/v1".
+    public init(client: HTTPClient = .shared, apiKey: String, baseURL: String = "https://api.indiepitcher.com/v1") {
         self.client = client
         self.apiKey = apiKey
+        self.baseURL = baseURL
     }
 
     // MARK: networking
@@ -50,7 +53,7 @@ public struct IndiePitcher: Sendable {
     }
 
     private func buildUri(path: String) -> String {
-        "https://api.indiepitcher.com/v1" + path
+        baseURL + path
     }
 
     private func post<T: Codable>(path: String, body: Codable) async throws -> T
