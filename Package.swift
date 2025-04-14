@@ -11,7 +11,7 @@ let package = Package(
         .library(
             name: "IndiePitcherSwift",
             targets: ["IndiePitcherSwift"]
-        ),
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.20.0"),
@@ -22,11 +22,13 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "IndiePitcherSwift",
-            dependencies: [.product(name: "AsyncHTTPClient", package: "async-http-client"),]
+            dependencies: [.product(name: "AsyncHTTPClient", package: "async-http-client")],
+            swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]
         ),
         .testTarget(
             name: "IndiePitcherSwiftTests",
-            dependencies: ["IndiePitcherSwift", "Nimble"]
+            dependencies: ["IndiePitcherSwift", "Nimble"],
+            swiftSettings: [.enableExperimentalFeature("StrictConcurrency=complete")]
         ),
     ]
 )

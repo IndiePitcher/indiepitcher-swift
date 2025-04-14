@@ -1,9 +1,14 @@
 import AsyncHTTPClient
-import Foundation
 import NIO
 import NIOCore
 import NIOFoundationCompat
 import NIOHTTP1
+
+#if canImport(FoundationEssentials)
+    import FoundationEssentials
+#else
+    import Foundation
+#endif
 
 extension HTTPClientResponse {
     var isOk: Bool {
@@ -25,7 +30,10 @@ public struct IndiePitcher: Sendable {
     ///   - client: Vapor's client instance to use to perform network requests. Uses the shared client by default.
     ///   - apiKey: Your project's secret key.
     ///   - baseURL: The base URL for the API. Defaults to "https://api.indiepitcher.com/v1".
-    public init(client: HTTPClient = .shared, apiKey: String, baseURL: String = "https://api.indiepitcher.com/v1") {
+    public init(
+        client: HTTPClient = .shared, apiKey: String,
+        baseURL: String = "https://api.indiepitcher.com/v1"
+    ) {
         self.client = client
         self.apiKey = apiKey
         self.baseURL = baseURL
@@ -56,8 +64,7 @@ public struct IndiePitcher: Sendable {
         baseURL + path
     }
 
-    private func post<T: Codable>(path: String, body: Codable) async throws -> T
-    {
+    private func post<T: Codable>(path: String, body: Codable) async throws -> T {
 
         var headers = commonHeaders
         headers.add(name: "Content-Type", value: "application/json")
@@ -144,6 +151,17 @@ public struct IndiePitcher: Sendable {
         async throws -> DataResponse<Contact>
     {
         try await post(path: "/contacts/create", body: contact)
+    }
+
+    /// Searches for a contact with the specified email address.
+    ///
+    /// - Parameter email: The email address of the contact to find.
+    /// - Returns: A `DataResponse` containing the contact information if found.
+    /// - Throws: An error if the contact cannot be found or if there's an issue with the request.
+    public func findContact(email: String) async throws -> DataResponse<Contact> {
+        let encodedEmail =
+            email.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? email
+        return try await get(path: "/contacts/find?email=\(encodedEmail)")
     }
 
     /// Add miultiple contacts (up to 100) using a single API call to avoid being rate limited. Payloads with `updateIfExists` is set to `true` will be updated if a contact with given email already exists.

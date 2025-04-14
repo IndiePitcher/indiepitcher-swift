@@ -1,4 +1,8 @@
-import Foundation
+#if canImport(FoundationEssentials)
+    import FoundationEssentials
+#else
+    import Foundation
+#endif
 
 /// The format of the email body
 public enum EmailBodyFormat: String, Codable, Sendable {
